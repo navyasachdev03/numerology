@@ -58,13 +58,23 @@ function App() {
 
   const downloadPDF = () => {
     const input = reportRef.current;
-    html2canvas(input, { scale: 2, useCORS: true }).then((canvas) => {
+  
+    const originalWidth = document.body.style.width;
+    const originalOverflow = document.body.style.overflow;
+
+    document.body.style.width = "1024px";
+    document.body.style.overflow = "visible";
+  
+    html2canvas(input, {
+      scale: 2,
+      useCORS: true,
+    }).then((canvas) => {
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
   
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
-
+  
       const imgProps = pdf.getImageProperties(imgData);
       const imgWidth = pdfWidth - 20;
       const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
@@ -72,7 +82,25 @@ function App() {
       const x = (pdfWidth - imgWidth) / 2;
       const y = 10;
   
-      pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
+      if (imgHeight < pdfHeight) {
+        pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
+      } else {
+        let position = 0;
+        let heightLeft = imgHeight;
+  
+        while (heightLeft > 0) {
+          pdf.addImage(imgData, "PNG", x, position + y, imgWidth, imgHeight);
+          heightLeft -= pdfHeight;
+          if (heightLeft > 0) {
+            pdf.addPage();
+            position -= pdfHeight;
+          }
+        }
+      }
+  
+      document.body.style.width = originalWidth;
+      document.body.style.overflow = originalOverflow;
+  
       pdf.save("numerology-report.pdf");
     });
   };
