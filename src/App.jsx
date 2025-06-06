@@ -107,7 +107,7 @@ function App() {
       document.body.style.width = originalWidth;
       document.body.style.overflow = originalOverflow;
   
-      pdf.save("numerology-report.pdf");
+      pdf.save(`report_${number}.pdf`);
     });
   };
 
