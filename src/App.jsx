@@ -58,6 +58,8 @@ function App() {
 
   const downloadPDF = () => {
     const input = reportRef.current;
+    const formElement = document.getElementById("exclude-from-pdf");
+    formElement.style.display = "none";
   
     const originalWidth = document.body.style.width;
     const originalOverflow = document.body.style.overflow;
@@ -98,6 +100,7 @@ function App() {
         }
       }
   
+      formElement.style.display = "block";
       document.body.style.width = originalWidth;
       document.body.style.overflow = originalOverflow;
   
@@ -120,7 +123,7 @@ function App() {
             Explore The Hidden Harmony And Numerological Power Of Your Mobile Number.
           </p>
 
-          <form onSubmit={handleSubmit} className="w-full max-w-md space-y-4">
+          <form onSubmit={handleSubmit} className="w-full max-w-md space-y-4" id="exclude-from-pdf">
             <input
               type="text"
               value={number}
