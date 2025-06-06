@@ -59,7 +59,9 @@ function App() {
   const downloadPDF = () => {
     const input = reportRef.current;
     const formElement = document.getElementById("exclude-from-pdf");
+    const downloadBtn = document.getElementById("exclude-download");
     formElement.style.display = "none";
+    downloadBtn.style.display = "none";
   
     const originalWidth = document.body.style.width;
     const originalOverflow = document.body.style.overflow;
@@ -101,6 +103,7 @@ function App() {
       }
   
       formElement.style.display = "block";
+      downloadBtn.style.display = "flex";
       document.body.style.width = originalWidth;
       document.body.style.overflow = originalOverflow;
   
@@ -198,7 +201,7 @@ function App() {
                 </table>
               </div>
 
-              <div className="flex justify-center mb-8">
+              <div className="flex justify-center mb-8" id="exclude-download">
                 <button
                   onClick={downloadPDF}
                   className="flex items-center gap-2 bg-orange-400 hover:bg-orange-500 text-white px-6 py-3 rounded-full font-bold text-lg transition-all"
