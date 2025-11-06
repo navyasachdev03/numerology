@@ -10,6 +10,7 @@ function App() {
   const [results, setResults] = useState([]);
   const [totalSum, setTotalSum] = useState(null);
   const [weightage, setWeightage] = useState(null);
+  const [tripleWarnings, setTripleWarnings] = useState([]);
 
   const reportRef = useRef(null);
 
@@ -53,6 +54,21 @@ function App() {
     const wt = Math.round((validPros / total) * 100);
     setWeightage(wt);
 
+    const tripleMap = {
+      "222": "Mood swings, depression, too much emotional, BP problem",
+      "444": "Delay, struggle, obstacles, less grounded",
+      "666": "More travelling with no use, At the time not allowed to use at need",
+      "777": "Mood swings, internal disturbances, overthinking & Anxiety, diabetes, joint problems",
+      "888": "Delay, struggle, disturbances, slow progress, Up-down in life",
+      "999": "Debt, anger issues, blood related issues, chances of skin patches",
+    };
+
+    const foundTriples = Object.keys(tripleMap).filter((trip) =>
+      number.includes(trip)
+    );
+
+    setTripleWarnings(foundTriples);
+
     setError("");
   };
 
@@ -62,36 +78,36 @@ function App() {
     const downloadBtn = document.getElementById("exclude-download");
     formElement.style.display = "none";
     downloadBtn.style.display = "none";
-  
+
     const originalWidth = document.body.style.width;
     const originalOverflow = document.body.style.overflow;
 
     document.body.style.width = "1024px";
     document.body.style.overflow = "visible";
-  
+
     html2canvas(input, {
       scale: 2,
       useCORS: true,
     }).then((canvas) => {
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
-  
+
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
-  
+
       const imgProps = pdf.getImageProperties(imgData);
       const imgWidth = pdfWidth - 20;
       const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-  
+
       const x = (pdfWidth - imgWidth) / 2;
       const y = 10;
-  
+
       if (imgHeight < pdfHeight) {
         pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
       } else {
         let position = 0;
         let heightLeft = imgHeight;
-  
+
         while (heightLeft > 0) {
           pdf.addImage(imgData, "PNG", x, position + y, imgWidth, imgHeight);
           heightLeft -= pdfHeight;
@@ -101,12 +117,12 @@ function App() {
           }
         }
       }
-  
+
       formElement.style.display = "block";
       downloadBtn.style.display = "flex";
       document.body.style.width = originalWidth;
       document.body.style.overflow = originalOverflow;
-  
+
       pdf.save(`report_${number}.pdf`);
     });
   };
@@ -146,8 +162,8 @@ function App() {
               type="submit"
               disabled={!isValidNumber(number)}
               className={`w-full py-3 rounded-md text-white font-semibold ${isValidNumber(number)
-                  ? "bg-blue-500 hover:bg-blue-600"
-                  : "bg-gray-400 cursor-not-allowed"
+                ? "bg-blue-500 hover:bg-blue-600"
+                : "bg-gray-400 cursor-not-allowed"
                 }`}
             >
               Submit
@@ -200,6 +216,20 @@ function App() {
                   </tbody>
                 </table>
               </div>
+
+              {tripleWarnings.length > 0 && (
+                <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-8">
+                  <p className="font-bold text-lg mb-2">⚠ Note:</p>
+                  <ul className="list-disc list-inside space-y-2">
+                    {tripleWarnings.map((trip, i) => (
+                      <li key={i}>
+                        <span className="font-bold text-red-800">{trip}</span> —{" "}
+                        {pairInfo[trip]?.cons || ""}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               <div className="flex justify-center mb-8" id="exclude-download">
                 <button
