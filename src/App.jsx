@@ -49,9 +49,18 @@ function App() {
     setResults(tableData);
     setTotalSum(calculateSum(number));
 
-    const validPros = tableData.filter(item => item.pros !== "None").length;
-    const total = tableData.length;
-    const wt = Math.round((validPros / total) * 100);
+    const positivePairs = tableData.filter(
+      item => item.nature && item.nature.toLowerCase() === "positive"
+    ).length;
+
+    let wt = positivePairs * 10;
+
+    if ([1, 3, 5, 6].includes(calculateSum(number))) {
+      wt += 10;
+    }
+
+    if (wt > 100) wt = 100;
+
     setWeightage(wt);
 
     const tripleMap = {
